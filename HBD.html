@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; text-align: center; background: #ffcade; }
+        canvas { display: block; }
+        #message { 
+            position: absolute; 
+            top: 20px; 
+            width: 100%; 
+            font-size: 2em; 
+            font-family: Arial, sans-serif; 
+            font-weight: bold;
+            color: #ff69b4;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">HAPPY BIRTHDAY to GWT!</div>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Cake base layers
+        function createCakeLayer(radius, height, color, yPosition) {
+            const geometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+            const material = new THREE.MeshPhongMaterial({ color: color });
+            const layer = new THREE.Mesh(geometry, material);
+            layer.position.y = yPosition;
+            scene.add(layer);
+        }
+
+        createCakeLayer(2.5, 0.4, 0xffe4e1, 0); // Bottom layer
+        createCakeLayer(2, 0.4, 0xffd4d4, 0.5); // Middle layer
+        createCakeLayer(1.5, 0.4, 0xffc0cb, 1); // Top layer
+
+        // Candles
+        function createCandle(x, z) {
+            const candleGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 32);
+            const candleMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+            const candle = new THREE.Mesh(candleGeometry, candleMaterial);
+            candle.position.set(x, 1.4, z);
+            scene.add(candle);
+            
+            // Flame
+            const flameGeometry = new THREE.ConeGeometry(0.2, 0.3, 32);
+            const flameMaterial = new THREE.MeshBasicMaterial({ color: 0xff4500 });
+            const flame = new THREE.Mesh(flameGeometry, flameMaterial);
+            flame.position.set(x, 1.8, z);
+            scene.add(flame);
+        }
+
+        createCandle(-0.6, -0.6);
+        createCandle(0.6, -0.6);
+        createCandle(0, 0.6);
+
+        // Lighting
+        const light = new THREE.PointLight(0xffffff, 1.5, 100);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+        
+        camera.position.z = 6;
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            scene.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
